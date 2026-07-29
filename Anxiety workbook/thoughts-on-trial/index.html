@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thoughts on Trial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#22384e;        /* deep teal-navy: courtroom authority, calming */
+    --ink-soft:#3d5670;
+    --brass:#c1912f;      /* brass / scales of justice */
+    --brass-deep:#9c7420;
+    --parchment:#f8f2e4;  /* writing surface */
+    --parchment-line:#e7dcc4;
+    --page:#eef1f0;       /* cool page ground */
+    --sage:#5f8a72;       /* verdict / resolution */
+    --sage-soft:#e4ede6;
+    --clay:#b0604a;       /* the worry — used sparingly */
+    --clay-soft:#f3e2dc;
+    --sky:#5a7d9a;        /* evidence-for accent */
+    --sky-soft:#e2ebf1;
+    --paper:#ffffff;
+    --shadow:rgba(34,56,78,.10);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;font-family:"Nunito",system-ui,sans-serif;color:var(--ink);
+    background:var(--page);line-height:1.55;
+  }
+  .wrap{max-width:940px;margin:0 auto;padding:28px 20px 64px}
+
+  /* ---------- Header ---------- */
+  header{text-align:center;padding:14px 0 6px}
+  .eyebrow{
+    font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--brass-deep);font-weight:800;margin:0 0 6px
+  }
+  h1{
+    font-family:"Fraunces",serif;font-weight:600;font-optical-sizing:auto;
+    font-size:clamp(2.3rem,7vw,3.7rem);line-height:1.02;margin:.05em 0 .1em;
+    letter-spacing:-.01em;color:var(--ink)
+  }
+  .sub{max-width:520px;margin:8px auto 0;color:var(--ink-soft);font-size:1.02rem}
+  .gavel{width:46px;height:46px;display:block;margin:0 auto 4px}
+
+  /* ---------- Case bar ---------- */
+  .casebar{
+    display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;align-items:center;
+    margin:22px auto 30px;padding:12px 18px;max-width:640px;
+    background:var(--paper);border:1px solid var(--parchment-line);
+    border-radius:14px;box-shadow:0 2px 14px var(--shadow)
+  }
+  .casebar label{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:800}
+  .casebar .field{display:flex;align-items:center;gap:8px}
+  .casebar input{
+    border:none;border-bottom:2px solid var(--parchment-line);background:transparent;
+    font-family:"Nunito";font-size:1rem;font-weight:700;color:var(--ink);
+    padding:2px 4px;min-width:120px;max-width:190px
+  }
+  .casebar input:focus{outline:none;border-bottom-color:var(--brass)}
+  .caseno{font-family:"Fraunces",serif;font-weight:600;color:var(--brass-deep)}
+
+  /* ---------- Cards / steps ---------- */
+  .card{
+    background:var(--paper);border:1px solid var(--parchment-line);border-radius:18px;
+    padding:26px 24px;margin:0 0 22px;box-shadow:0 3px 18px var(--shadow);position:relative
+  }
+  .step-no{
+    position:absolute;top:-14px;left:22px;width:30px;height:30px;border-radius:50%;
+    background:var(--ink);color:#fff;font-family:"Fraunces",serif;font-weight:600;
+    display:flex;align-items:center;justify-content:center;font-size:1rem;
+    box-shadow:0 2px 8px var(--shadow)
+  }
+  h2{
+    font-family:"Fraunces",serif;font-weight:600;font-size:1.5rem;margin:4px 0 4px;
+    letter-spacing:-.01em
+  }
+  .hint{color:var(--ink-soft);font-size:.94rem;margin:0 0 16px}
+
+  /* the thought */
+  .thought-area{
+    width:100%;min-height:88px;resize:vertical;border:2px dashed var(--clay);
+    background:var(--clay-soft);border-radius:12px;padding:14px 16px;
+    font-family:"Nunito";font-size:1.08rem;font-weight:600;color:var(--ink);line-height:1.5
+  }
+  .thought-area:focus{outline:none;border-style:solid}
+  .thought-area::placeholder{color:#b98d80;font-weight:600}
+
+  /* belief slider */
+  .belief{margin-top:18px}
+  .belief-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .belief label{font-weight:800;font-size:.98rem}
+  .belief-val{font-family:"Fraunces",serif;font-weight:600;font-size:1.5rem;color:var(--clay);min-width:64px;text-align:right}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:8px;
+    background:linear-gradient(90deg,var(--clay) 0%,var(--clay) var(--fill,50%),var(--parchment-line) var(--fill,50%),var(--parchment-line) 100%);
+    margin-top:12px;cursor:pointer
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;
+    background:var(--paper);border:3px solid var(--clay);box-shadow:0 2px 6px var(--shadow);cursor:pointer
+  }
+  input[type=range]::-moz-range-thumb{
+    width:24px;height:24px;border-radius:50%;background:var(--paper);
+    border:3px solid var(--clay);box-shadow:0 2px 6px var(--shadow);cursor:pointer
+  }
+  .belief.after input[type=range]{background:linear-gradient(90deg,var(--sage) 0%,var(--sage) var(--fill,50%),var(--parchment-line) var(--fill,50%),var(--parchment-line) 100%)}
+  .belief.after input[type=range]::-webkit-slider-thumb{border-color:var(--sage)}
+  .belief.after input[type=range]::-moz-range-thumb{border-color:var(--sage)}
+  .belief.after .belief-val{color:var(--sage)}
+
+  /* ---------- Scales signature ---------- */
+  .scale-card{text-align:center;background:linear-gradient(180deg,#fbfaf6,#f5efe1);overflow:hidden}
+  .scale-svg{width:100%;max-width:520px;height:auto;margin:2px auto -6px;display:block}
+  .verdict-read{
+    font-family:"Fraunces",serif;font-size:1.08rem;color:var(--ink-soft);
+    margin:4px auto 0;min-height:1.4em;transition:color .3s
+  }
+  .verdict-read b{color:var(--ink)}
+
+  /* ---------- Evidence ---------- */
+  .evidence-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:640px){.evidence-grid{grid-template-columns:1fr}}
+  .ev-col h3{
+    font-family:"Fraunces",serif;font-weight:600;font-size:1.18rem;margin:0 0 2px;
+    display:flex;align-items:center;gap:8px
+  }
+  .ev-col .tag{font-size:.86rem;color:var(--ink-soft);margin:0 0 12px;font-weight:600}
+  .ev-for h3{color:var(--sky)}
+  .ev-against h3{color:var(--sage)}
+  .dot{width:12px;height:12px;border-radius:50%;flex:none}
+  .ev-for .dot{background:var(--sky)}
+  .ev-against .dot{background:var(--sage)}
+  .ev-add{display:flex;gap:8px}
+  .ev-add input{
+    flex:1;border:1.5px solid var(--parchment-line);border-radius:10px;padding:11px 12px;
+    font-family:"Nunito";font-size:.98rem;font-weight:600;color:var(--ink);background:var(--parchment);min-width:0
+  }
+  .ev-add input:focus{outline:none;border-color:var(--brass)}
+  .ev-add button{
+    flex:none;border:none;border-radius:10px;padding:0 16px;font-family:"Nunito";
+    font-weight:800;font-size:1.3rem;color:#fff;cursor:pointer;line-height:1
+  }
+  .ev-for .ev-add button{background:var(--sky)}
+  .ev-against .ev-add button{background:var(--sage)}
+  .ev-add button:hover{filter:brightness(1.06)}
+  ul.ev-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+  ul.ev-list li{
+    display:flex;align-items:flex-start;gap:8px;background:var(--parchment);
+    border:1px solid var(--parchment-line);border-radius:10px;padding:9px 10px 9px 12px;
+    font-weight:600;font-size:.96rem;line-height:1.4;animation:pop .25s ease
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  ul.ev-list li span{flex:1;word-break:break-word}
+  ul.ev-list li button{
+    flex:none;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;
+    font-size:1.15rem;line-height:1;padding:0 2px;border-radius:6px;font-weight:800
+  }
+  ul.ev-list li button:hover{color:var(--clay)}
+  .ev-empty{color:#a9a294;font-size:.9rem;font-style:italic;margin:12px 0 0}
+  .facts-note{
+    margin:20px 0 0;padding:12px 16px;background:var(--sky-soft);border-radius:12px;
+    font-size:.92rem;color:var(--ink);text-align:center;font-weight:600
+  }
+  .facts-note b{color:var(--sky)}
+
+  /* verdict */
+  .verdict-card{background:linear-gradient(180deg,#fff,var(--sage-soft))}
+  .verdict-area{
+    width:100%;min-height:96px;resize:vertical;border:2px solid var(--sage);
+    background:var(--paper);border-radius:12px;padding:14px 16px;
+    font-family:"Nunito";font-size:1.06rem;font-weight:600;color:var(--ink);line-height:1.5
+  }
+  .verdict-area:focus{outline:none;box-shadow:0 0 0 3px var(--sage-soft)}
+  .verdict-area::placeholder{color:#8fae9c}
+
+  /* actions */
+  .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+  .btn{
+    font-family:"Nunito";font-weight:800;font-size:1rem;border-radius:12px;
+    padding:13px 26px;cursor:pointer;border:2px solid var(--ink);transition:transform .12s,background .15s
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn-primary{background:var(--ink);color:#fff}
+  .btn-ghost{background:transparent;color:var(--ink)}
+  footer{text-align:center;color:var(--ink-soft);font-size:.82rem;margin-top:30px}
+  footer .brand{font-family:"Fraunces",serif;font-weight:600;color:var(--brass-deep)}
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:100%;padding:0}
+    .no-print,.ev-add,.actions{display:none !important}
+    .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+    .scale-card{background:#fff}
+    header{padding-top:0}
+    .thought-area,.verdict-area,.ev-add input,.casebar input{border-color:#999}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{scroll-behavior:auto}
+    ul.ev-list li{animation:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="gavel" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <rect x="6" y="38" width="30" height="5" rx="2.5" fill="#22384e"/>
+      <rect x="27" y="10" width="8" height="20" rx="3" transform="rotate(45 31 20)" fill="#c1912f"/>
+      <rect x="33" y="4" width="12" height="9" rx="3" transform="rotate(45 39 8.5)" fill="#9c7420"/>
+      <rect x="12" y="24" width="16" height="8" rx="3" transform="rotate(45 20 28)" fill="#22384e"/>
+    </svg>
+    <p class="eyebrow">Case File · The Court of Clear Thinking</p>
+    <h1>Thoughts on Trial</h1>
+    <p class="sub">A worried thought showed up. Before you believe it, let's look at the real evidence — and reach a fair verdict.</p>
+  </header>
+
+  <div class="casebar">
+    <div class="field"><label>Case No.</label><span class="caseno" id="caseNo">—</span></div>
+    <div class="field"><label for="judge">Presiding judge</label><input id="judge" placeholder="your name" autocomplete="off"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="card">
+    <div class="step-no">1</div>
+    <h2>The thought on trial</h2>
+    <p class="hint">Write the worried or upsetting thought you want to examine. One thought at a time.</p>
+    <textarea class="thought-area" id="thought" placeholder="e.g. &quot;If I raise my hand and get it wrong, everyone will think I'm stupid.&quot;"></textarea>
+
+    <div class="belief">
+      <div class="belief-top">
+        <label for="beliefBefore">Right now, how much do you believe it?</label>
+        <span class="belief-val" id="beliefBeforeVal">50%</span>
+      </div>
+      <input type="range" id="beliefBefore" min="0" max="100" value="50">
+    </div>
+  </section>
+
+  <!-- SCALES -->
+  <section class="card scale-card no-print-hide">
+    <h2 style="margin-bottom:2px">The scales of evidence</h2>
+    <p class="hint" style="margin-bottom:6px">Watch them tip as you weigh the facts below.</p>
+    <svg class="scale-svg" id="scaleSvg" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- base + post -->
+      <rect x="150" y="222" width="100" height="12" rx="6" fill="#22384e"/>
+      <rect x="176" y="208" width="48" height="10" rx="5" fill="#3d5670"/>
+      <rect x="196" y="52" width="8" height="160" rx="4" fill="#3d5670"/>
+      <circle cx="200" cy="52" r="9" fill="#c1912f"/>
+      <!-- chains (updated by JS) -->
+      <line id="chainL1" stroke="#9c7420" stroke-width="1.6"/>
+      <line id="chainL2" stroke="#9c7420" stroke-width="1.6"/>
+      <line id="chainR1" stroke="#9c7420" stroke-width="1.6"/>
+      <line id="chainR2" stroke="#9c7420" stroke-width="1.6"/>
+      <!-- beam -->
+      <g id="beam">
+        <rect x="80" y="49" width="240" height="7" rx="3.5" fill="#c1912f"/>
+        <circle cx="80" cy="52.5" r="5" fill="#9c7420"/>
+        <circle cx="320" cy="52.5" r="5" fill="#9c7420"/>
+      </g>
+      <!-- pans -->
+      <g id="panL">
+        <path d="M56 4 A44 30 0 0 0 144 4 Z" fill="#e2ebf1" stroke="#5a7d9a" stroke-width="2.5"/>
+        <text x="100" y="-4" text-anchor="middle" font-family="Fraunces,serif" font-size="15" font-weight="600" fill="#5a7d9a" id="panLcount">0</text>
+      </g>
+      <g id="panR">
+        <path d="M256 4 A44 30 0 0 0 344 4 Z" fill="#e4ede6" stroke="#5f8a72" stroke-width="2.5"/>
+        <text x="300" y="-4" text-anchor="middle" font-family="Fraunces,serif" font-size="15" font-weight="600" fill="#5f8a72" id="panRcount">0</text>
+      </g>
+    </svg>
+    <p class="verdict-read" id="scaleRead">Add some evidence and the scales will start to move.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="card">
+    <div class="step-no">2</div>
+    <h2>Weigh the evidence</h2>
+    <p class="hint">Add real evidence on each side. The key rule of this courtroom: <b>facts, not feelings.</b></p>
+    <div class="evidence-grid">
+      <div class="ev-col ev-for">
+        <h3><span class="dot"></span>Evidence FOR</h3>
+        <p class="tag">Facts that suggest the thought is true</p>
+        <div class="ev-add">
+          <input id="forInput" placeholder="Add a fact…" autocomplete="off">
+          <button type="button" id="forAdd" aria-label="Add evidence for">+</button>
+        </div>
+        <ul class="ev-list" id="forList"></ul>
+        <p class="ev-empty" id="forEmpty">No evidence yet.</p>
+      </div>
+      <div class="ev-col ev-against">
+        <h3><span class="dot"></span>Evidence AGAINST</h3>
+        <p class="tag">Facts that suggest it's not true — or not the whole story</p>
+        <div class="ev-add">
+          <input id="againstInput" placeholder="Add a fact…" autocomplete="off">
+          <button type="button" id="againstAdd" aria-label="Add evidence against">+</button>
+        </div>
+        <ul class="ev-list" id="againstList"></ul>
+        <p class="ev-empty" id="againstEmpty">No evidence yet.</p>
+      </div>
+    </div>
+    <p class="facts-note">A <b>fact</b> is something you could prove to the court. "I failed one quiz" is a fact. "I'm a failure" is a feeling.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="card verdict-card">
+    <div class="step-no">3</div>
+    <h2>The verdict</h2>
+    <p class="hint">You're the judge. Looking only at the facts, what's a fairer, more balanced thought to walk out with?</p>
+    <textarea class="verdict-area" id="verdict" placeholder="e.g. &quot;Getting one answer wrong doesn't make me stupid. I've been wrong before and no one remembered by the next day.&quot;"></textarea>
+
+    <div class="belief after">
+      <div class="belief-top">
+        <label for="beliefAfter">Now, how much do you believe the original worried thought?</label>
+        <span class="belief-val" id="beliefAfterVal">50%</span>
+      </div>
+      <input type="range" id="beliefAfter" min="0" max="100" value="50">
+    </div>
+  </section>
+
+  <div class="actions no-print">
+    <button class="btn btn-primary" id="printBtn">Save / Print verdict</button>
+    <button class="btn btn-ghost" id="resetBtn">Start a new case</button>
+  </div>
+
+  <footer>
+    A CBT evidence-examination exercise · <span class="brand">Possibility Development</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Case number from today's date */
+  var d = new Date();
+  var pad = function(n){return (n<10?"0":"")+n;};
+  document.getElementById("caseNo").textContent =
+    d.getFullYear()+"-"+pad(d.getMonth()+1)+pad(d.getDate())+"-"+pad(d.getHours())+pad(d.getMinutes());
+
+  /* Belief sliders */
+  function wireSlider(id, valId){
+    var s = document.getElementById(id), v = document.getElementById(valId);
+    function upd(){ v.textContent = s.value+"%"; s.style.setProperty("--fill", s.value+"%"); }
+    s.addEventListener("input", upd); upd();
+  }
+  wireSlider("beliefBefore","beliefBeforeVal");
+  wireSlider("beliefAfter","beliefAfterVal");
+
+  /* Evidence lists + scale */
+  var forData = [], againstData = [];
+
+  function makeList(data, listEl, emptyEl, removeCb){
+    listEl.innerHTML = "";
+    if(data.length === 0){ emptyEl.style.display = "block"; return; }
+    emptyEl.style.display = "none";
+    data.forEach(function(txt, i){
+      var li = document.createElement("li");
+      var span = document.createElement("span"); span.textContent = txt;
+      var btn = document.createElement("button"); btn.type="button";
+      btn.setAttribute("aria-label","Remove"); btn.textContent = "×";
+      btn.addEventListener("click", function(){ removeCb(i); });
+      li.appendChild(span); li.appendChild(btn); listEl.appendChild(li);
+    });
+  }
+
+  function render(){
+    makeList(forData, document.getElementById("forList"),
+             document.getElementById("forEmpty"), function(i){ forData.splice(i,1); render(); });
+    makeList(againstData, document.getElementById("againstList"),
+             document.getElementById("againstEmpty"), function(i){ againstData.splice(i,1); render(); });
+    document.getElementById("panLcount").textContent = forData.length;
+    document.getElementById("panRcount").textContent = againstData.length;
+    updateScale();
+  }
+
+  function addFrom(inputId, data){
+    var el = document.getElementById(inputId);
+    var t = el.value.trim();
+    if(!t) return;
+    data.push(t); el.value = ""; el.focus(); render();
+  }
+  document.getElementById("forAdd").addEventListener("click", function(){ addFrom("forInput", forData); });
+  document.getElementById("againstAdd").addEventListener("click", function(){ addFrom("againstInput", againstData); });
+  document.getElementById("forInput").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addFrom("forInput", forData);} });
+  document.getElementById("againstInput").addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); addFrom("againstInput", againstData);} });
+
+  /* ---- Scale geometry ---- */
+  var PIVOT_X = 200, PIVOT_Y = 52.5, ARM = 120, CHAIN = 46, PAN_TOP_OFFSET = 6;
+  var beam = document.getElementById("beam");
+  var panL = document.getElementById("panL"), panR = document.getElementById("panR");
+  var cL1=document.getElementById("chainL1"), cL2=document.getElementById("chainL2");
+  var cR1=document.getElementById("chainR1"), cR2=document.getElementById("chainR2");
+  var read = document.getElementById("scaleRead");
+  var curAngle = 0;
+
+  function applyAngle(a){
+    var rad = a*Math.PI/180;
+    var cos = Math.cos(rad), sin = Math.sin(rad);
+    beam.setAttribute("transform","rotate("+a+" "+PIVOT_X+" "+PIVOT_Y+")");
+    // left tip
+    var lx = PIVOT_X - ARM*cos, ly = PIVOT_Y - ARM*sin;
+    var rx = PIVOT_X + ARM*cos, ry = PIVOT_Y + ARM*sin;
+    // pans hang straight down; pan art top edge sits at y=4 in its own coords, group origin 0,0
+    panL.setAttribute("transform","translate("+(lx-100)+","+(ly+CHAIN)+")");
+    panR.setAttribute("transform","translate("+(rx-300)+","+(ry+CHAIN)+")");
+    // chains from tips to pan rim corners
+    cL1.setAttribute("x1",lx-30); cL1.setAttribute("y1",ly); cL1.setAttribute("x2",lx-30); cL1.setAttribute("y2",ly+CHAIN+4);
+    cL2.setAttribute("x1",lx+30); cL2.setAttribute("y1",ly); cL2.setAttribute("x2",lx+30); cL2.setAttribute("y2",ly+CHAIN+4);
+    cR1.setAttribute("x1",rx-30); cR1.setAttribute("y1",ry); cR1.setAttribute("x2",rx-30); cR1.setAttribute("y2",ry+CHAIN+4);
+    cR2.setAttribute("x1",rx+30); cR2.setAttribute("y1",ry); cR2.setAttribute("x2",rx+30); cR2.setAttribute("y2",ry+CHAIN+4);
+  }
+
+  function tweenTo(target){
+    if(reduce){ curAngle=target; applyAngle(target); return; }
+    var start=curAngle, dur=380, t0=null;
+    function frame(ts){
+      if(t0===null) t0=ts;
+      var p=Math.min(1,(ts-t0)/dur);
+      var e=1-Math.pow(1-p,3);
+      curAngle=start+(target-start)*e;
+      applyAngle(curAngle);
+      if(p<1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function updateScale(){
+    var f=forData.length, a=againstData.length;
+    // AGAINST heavier -> right pan sinks -> positive angle
+    var diff=a-f;
+    var target=Math.max(-20,Math.min(20,diff*5));
+    tweenTo(target);
+    if(f===0 && a===0){ read.innerHTML="Add some evidence and the scales will start to move."; return; }
+    if(a>f){ read.innerHTML="The facts lean toward <b>the thought isn't the whole story.</b>"; }
+    else if(f>a){ read.innerHTML="The facts lean toward <b>the thought being true</b> — the verdict is yours to weigh."; }
+    else{ read.innerHTML="It's <b>evenly balanced</b> right now. Any more facts to add?"; }
+  }
+
+  applyAngle(0);
+  render();
+
+  /* Actions */
+  document.getElementById("printBtn").addEventListener("click", function(){ window.print(); });
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!confirm("Clear this case and start a new one?")) return;
+    forData=[]; againstData=[];
+    document.getElementById("thought").value="";
+    document.getElementById("verdict").value="";
+    document.getElementById("judge").value="";
+    ["beliefBefore","beliefAfter"].forEach(function(id){
+      var s=document.getElementById(id); s.value=50; s.dispatchEvent(new Event("input"));
+    });
+    render();
+    window.scrollTo({top:0,behavior: reduce ? "auto":"smooth"});
+  });
+})();
+</script>
+</body>
+</html>
